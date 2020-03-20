@@ -21,6 +21,13 @@ void zeroes(Matrix &M,int n){
     }
 }
 
+void zeroes(Matrix &M,int n, int m){
+    for(int i=0;i<n;i++){
+        vector<float> row(m,0.0);
+        M.push_back(row);
+    }
+}
+
 void copyVector(Vector v, Vector &copy){
     zeroes(copy,v.size());
     for(int i=0;i<v.size();i++)
@@ -46,9 +53,12 @@ void productMatrixVector(Matrix A, Vector v, Vector &R){
 
 void productRealMatrix(float real,Matrix M,Matrix &R){
     zeroes(R,M.size());
-    for(int i=0;i<M.size();i++)
-        for(int j=0;j<M.at(0).size();j++)
-            R.at(i).at(j) = real*M.at(i).at(j);
+    for(int i=0;i<M.size();i++){
+        for(int j=0;j<M.at(0).size();j++){
+            float val = roundf(real*M.at(i).at(j) * 100) / 100;
+            R.at(i).at(j) = val;
+        }
+    }
 }
 
 float calculateMember(int i,int j,int r,Matrix A,Matrix B){
@@ -127,4 +137,16 @@ void transpose(Matrix M, Matrix &T){
     for(int i=0;i<M.size();i++)
         for(int j=0;j<M.at(0).size();j++)
             T.at(j).at(i) = M.at(i).at(j);
+}
+
+void inverse(Matrix M, Matrix &Minv){
+    Matrix cofM, cofMT;
+    cofactors(M, cofM);
+    transpose(cofM, cofMT);
+    float det = determinant(M);
+    if(det != 0.0){
+        productRealMatrix(1.0/det, cofMT, Minv);
+    }else{
+        exit(EXIT_FAILURE);
+    }
 }
